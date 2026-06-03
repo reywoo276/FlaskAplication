@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{% if book %}Редагувати книгу{% else %}Нова книга{% endif %}{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="{{ url_for('books_list') }}">Книги</a> /
+  {% if book %}<a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a> / Редагувати
+  {% else %}Нова книга{% endif %}
+</div>
+
+<div class="form-page">
+  <h1 class="page-title">{% if book %}Редагувати книгу{% else %}Нова книга{% endif %}</h1>
+  {% if not book %}
+  <p class="page-sub">Книга додається через збережену функцію <code>add_book()</code> у PostgreSQL</p>
+  {% endif %}
+
+  <form method="post" class="form-card">
+    <div class="form-group">
+      <label class="form-label">Назва <span class="req">*</span></label>
+      <input class="form-input" type="text" name="title"
+             value="{{ book.title if book else '' }}" required>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Автор <span class="req">*</span></label>
+        <select class="form-input form-select" name="author_id" required>
+          <option value="">— обрати —</option>
+          {% for a in authors %}
+          <option value="{{ a.id }}" {% if book and book.author_id == a.id %}selected{% endif %}>
+            {{ a.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Рік видання</label>
+        <input class="form-input" type="number" name="year" min="0" max="2100"
+               value="{{ book.year if book and book.year else '' }}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Жанр</label>
+      <input class="form-input" type="text" name="genre"
+             value="{{ book.genre if book else '' }}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Опис</label>
+      <textarea class="form-input form-textarea" name="description">{{ book.description if book else '' }}</textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">
+        {% if book %}Зберегти зміни{% else %}Додати книгу{% endif %}
+      </button>
+      <a href="{{ url_for('books_list') }}" class="btn btn-ghost">Скасувати</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Автори{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Автори</h1>
+    <p class="page-sub">{{ authors|length }} авторів · {{ stats.total }} книг у каталозі</p>
+  </div>
+  <a href="{{ url_for('author_new') }}" class="btn btn-primary">+ Додати автора</a>
+</div>
+
+{% if authors %}
+<div class="card-grid">
+  {% for a in authors %}
+  <div class="card author-card">
+    <div class="card-body">
+      <div class="author-meta">
+        <span class="badge">{{ a.country or '—' }}</span>
+        <span class="book-count">{{ a.book_count }} кн.</span>
+      </div>
+      <h2 class="card-title">{{ a.name }}</h2>
+    </div>
+    <div class="card-footer">
+      <a href="{{ url_for('author_detail', author_id=a.id) }}" class="btn btn-sm btn-outline">Переглянути</a>
+      <a href="{{ url_for('author_edit',   author_id=a.id) }}" class="btn btn-sm btn-ghost">Редагувати</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">🖋</div>
+  <p>Авторів ще немає. <a href="{{ url_for('author_new') }}">Додати першого</a></p>
+</div>
+{% endif %}
+{% endblock %}

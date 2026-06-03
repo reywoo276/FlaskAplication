@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Книги{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Всі книги</h1>
+    <p class="page-sub">{{ books|length }} записів у каталозі</p>
+  </div>
+  <a href="{{ url_for('book_new') }}" class="btn btn-primary">+ Додати книгу</a>
+</div>
+
+{% if books %}
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Назва</th><th>Автор</th><th>Рік</th><th>Жанр</th><th>Додано</th><th>Дії</th></tr>
+    </thead>
+    <tbody>
+    {% for b in books %}
+      <tr>
+        <td><a href="{{ url_for('book_detail', book_id=b.id) }}">{{ b.title }}</a></td>
+        <td><a href="{{ url_for('author_detail', author_id=b.author_id) }}">{{ b.author_name }}</a></td>
+        <td class="mono">{{ b.year or '—' }}</td>
+        <td>{{ b.genre or '—' }}</td>
+        <td class="mono muted">{{ b.created_at.strftime('%d.%m.%Y') }}</td>
+        <td>
+          <a href="{{ url_for('book_edit', book_id=b.id) }}" class="tbl-link">ред.</a>
+          <form method="post" action="{{ url_for('book_delete', book_id=b.id) }}" style="display:inline"
+                onsubmit="return confirm('Видалити книгу «{{ b.title }}»?')">
+            <button class="tbl-link tbl-link-danger">вид.</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">📖</div>
+  <p>Книг ще немає. <a href="{{ url_for('book_new') }}">Додати першу</a></p>
+</div>
+{% endif %}
+{% endblock %}

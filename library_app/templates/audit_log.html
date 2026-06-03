@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Журнал аудиту{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Журнал аудиту</h1>
+    <p class="page-sub">Автоматично заповнюється <strong>тригером</strong> <code>books_audit_trigger</code></p>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>Як це працює:</strong> При кожній операції INSERT / UPDATE / DELETE в таблиці <code>books</code>
+  спрацьовує тригер <code>trg_books_audit()</code>, який записує подію в <code>audit_log</code>
+  та оновлює поле <code>updated_at</code>.
+</div>
+
+{% if logs %}
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Час</th><th>Таблиця</th><th>Операція</th><th>ID запису</th><th>Деталі</th></tr>
+    </thead>
+    <tbody>
+    {% for l in logs %}
+      <tr>
+        <td class="mono muted">{{ l.created_at.strftime('%d.%m.%Y %H:%M:%S') }}</td>
+        <td class="mono">{{ l.table_name }}</td>
+        <td><span class="op-badge op-{{ l.operation|lower }}">{{ l.operation }}</span></td>
+        <td class="mono">#{{ l.record_id }}</td>
+        <td>{{ l.details }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">📋</div>
+  <p>Журнал порожній. Додайте або відредагуйте книгу, щоб побачити записи.</p>
+</div>
+{% endif %}
+{% endblock %}
